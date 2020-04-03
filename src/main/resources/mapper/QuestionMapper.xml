@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.unfbx.tellmewhy.dao.QuestionDao">
+
+    <sql id="BASE_TABLE">
+        question
+    </sql>
+
+
+    <resultMap id="BaseResultMap" type="com.unfbx.tellmewhy.pojo.Question" >
+        <constructor >
+            <idArg column="qid" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="openid" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="title" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="content" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+            <arg column="slug" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="type" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="comments_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="hits" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="un_like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="title_pic" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="status" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="allow_comment" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="is_top" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+            <arg column="modifie_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+        </constructor>
+    </resultMap>
+
+    <!-- 基本列 -->
+    <sql id="BASE_COLUMN">
+        qid,
+        openid,
+        title,
+        content,
+        slug,
+        type,
+        comments_num,
+        hits,
+        like_num,
+        un_like_num,
+        title_pic,
+        status,
+        allow_comment,
+        is_top,
+        create_time,
+        modifie_time
+    </sql>
+    <insert id="insert" keyProperty="qid" useGeneratedKeys="true" parameterType="com.unfbx.tellmewhy.pojo.Question">
+        INSERT INTO question(
+            openid,
+            title,
+            content,
+            slug,
+            type,
+            comments_num,
+            hits,
+            like_num,
+            un_like_num,
+            title_pic,
+            status,
+            allow_comment,
+            is_top,
+            create_time,
+            modifie_time
+        )
+        VALUES(
+            #{openid,jdbcType=VARCHAR},
+            #{title,jdbcType=VARCHAR},
+            #{content,jdbcType=VARCHAR},
+            #{slug,jdbcType=VARCHAR},
+            #{type,jdbcType=VARCHAR},
+            #{commentsNum,jdbcType=INTEGER},
+            #{hits,jdbcType=INTEGER},
+            #{likeNum,jdbcType=INTEGER},
+            #{unLikeNum,jdbcType=INTEGER},
+            #{titlePic,jdbcType=VARCHAR},
+            #{status,jdbcType=VARCHAR},
+            #{allowComment,jdbcType=VARCHAR},
+            #{isTop,jdbcType=VARCHAR},
+            now(),
+            now()
+		)
+    </insert>
+
+
+    <!-- 查找日志 -->
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+
+        <where>
+            <if test="status != null and status!=''" >
+                status = #{status,jdbcType=VARCHAR}
+            </if>
+        </where>
+        <if test="orderBy != null and orderBy!=''" >
+            order by ${orderBy} desc
+        </if>
+
+    </select>
+    <select id="findById" resultType="com.unfbx.tellmewhy.pojo.Question">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        where qid = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <update id="hit">
+        UPDATE
+        <include refid="BASE_TABLE"/>
+        SET hits = hits
+        WHERE qid = #{id, jdbcType=INTEGER}
+    </update>
+    <update id="like">
+        UPDATE
+        <include refid="BASE_TABLE"/>
+        SET like_num = likeNum
+        WHERE qid = #{id, jdbcType=INTEGER}
+    </update>
+    <update id="unLike">
+        UPDATE
+        <include refid="BASE_TABLE"/>
+        SET un_like_num = unLikeNum
+        WHERE qid = #{id, jdbcType=INTEGER}
+    </update>
+
+    <select id="findByOpenid" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        <where>
+            <if test="status != null and status!=''" >
+                status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="openid != null and openid!=''" >
+                and openid = #{openid,jdbcType=VARCHAR}
+            </if>
+        </where>
+
+    </select>
+
+
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.unfbx.tellmewhy.dao.CommentsDao">
+
+    <sql id="BASE_TABLE">
+        comments
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.unfbx.tellmewhy.pojo.Comments" >
+        <constructor >
+            <idArg column="cid" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="openid" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="nick_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="avatar_url" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+            <arg column="qid" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="content" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="comments_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="un_like_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+            <arg column="status" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="ip" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="parentid" jdbcType="VARCHAR" javaType="java.lang.String" />
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+            <arg column="modifie_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+        </constructor>
+    </resultMap>
+
+    <!-- 基本列 -->
+    <sql id="BASE_COLUMN">
+        cid,
+        openid,
+        nick_name,
+        avatar_url,
+        qid,
+        content,
+        comments_num,
+        like_num,
+        un_like_num,
+        status,
+        ip,
+        parentid,
+        create_time,
+        modifie_time
+    </sql>
+    <insert id="insert" keyProperty="cid" useGeneratedKeys="true" parameterType="com.unfbx.tellmewhy.pojo.Comments">
+        INSERT INTO question(
+            openid,
+            nick_name,
+            avatar_url,
+            qid,
+            content,
+            comments_num,
+            like_num,
+            un_like_num,
+            status,
+            ip,
+            parentid,
+            create_time,
+            modifie_time
+        )
+        VALUES(
+            #{openid,jdbcType=VARCHAR},
+            #{nick_name,jdbcType=VARCHAR},
+            #{avatar_url,jdbcType=VARCHAR},
+            #{qid,jdbcType=VARCHAR},
+            #{content,jdbcType=VARCHAR},
+            #{commentsNum,jdbcType=INTEGER},
+            #{likeNum,jdbcType=INTEGER},
+            #{unLikeNum,jdbcType=INTEGER},
+            #{status,jdbcType=VARCHAR},
+            #{ip,jdbcType=VARCHAR},
+            #{parentid,jdbcType=VARCHAR},
+            now(),
+            now()
+		)
+    </insert>
+
+    <select id="findByCid" resultType="com.unfbx.tellmewhy.pojo.Comments">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        where cid = #{cid,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.unfbx.tellmewhy.pojo.Comments">
+
+    </update>
+
+
+    <select id="findByOpenid" resultMap="BaseResultMap" parameterType="com.unfbx.tellmewhy.vo.request.CommentsRequest">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        <where>
+                status = #{status,jdbcType=VARCHAR}
+            <if test="openid != null and openid!=''" >
+                and openid = #{openid,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="findByQid" resultMap="BaseResultMap" parameterType="com.unfbx.tellmewhy.vo.request.CommentsRequest">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        <where>
+                status = #{status,jdbcType=VARCHAR}
+
+            <if test="qid != null and qid!=''" >
+                and qid = #{qid,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by #{orderBy} desc
+    </select>
+
+    <select id="findByParentid" resultMap="BaseResultMap" parameterType="com.unfbx.tellmewhy.vo.request.CommentsRequest">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        <where>
+            status = #{status,jdbcType=VARCHAR}
+            and parentid = #{parentid,jdbcType=VARCHAR}
+        </where>
+        order by create_time desc
+    </select>
+
+
+</mapper>
