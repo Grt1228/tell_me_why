@@ -23,9 +23,9 @@ import java.util.List;
 
 /**
  * 【问题】相关
+ *
  * @create GRT
  * @date 20190813
- *
  */
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -46,30 +46,30 @@ public class QuestionServiceImpl implements QuestionService {
         List<Question> questionList = questionDao.findAll(request);
         PageInfo<Question> pageInfo = new PageInfo<>(questionList);
 
-        return APIResponse.success("成功",pageInfo);
+        return APIResponse.success("成功", pageInfo);
     }
 
     @Override
     public APIResponse<QuestionResponse> findById(Integer id) {
-        if(id == null){
+        if (id == null) {
             throw new BusinessException("这个问题不见了~");
         }
         Question question = questionDao.findById(id);
 
-        if(question == null){
+        if (question == null) {
             throw new BusinessException("这个问题不见了~");
         }
         //默认点击查看详情带出8条有效评论
-        PageHelper.startPage(1,8);
+        PageHelper.startPage(1, 8);
         CommentsRequest request = new CommentsRequest();
         request.setQid(id);
         request.setStatus(ConstValue.Status.YES.getCode());
         List<Comments> commentsList = commentsDao.findByQid(request);
 
         QuestionResponse response = new QuestionResponse();
-        BeanUtils.copyProperties(question,response);
+        BeanUtils.copyProperties(question, response);
         //buildResponse
-        buildResponse(response,commentsList);
+        buildResponse(response, commentsList);
         //增加点击次数
         hit(id);
         return APIResponse.success(response);
@@ -81,8 +81,12 @@ public class QuestionServiceImpl implements QuestionService {
         question.setStatus(ConstValue.Status.YES.getCode());
         question.setAllowComment(String.valueOf(ConstValue.AllowComment.YES.getCode()));
         question.setIsTop(String.valueOf(ConstValue.IsTop.NO.getCode()));
+        question.setLikeNum(0);
+        question.setUnLikeNum(0);
+        question.setHits(0);
+        question.setCommentsNum(0);
         int i = questionDao.insert(question);
-        if(i<=0){
+        if (i <= 0) {
             throw new BusinessException("创建问题出错");
         }
         return APIResponse.success("创建问题成功");
@@ -92,11 +96,11 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public APIResponse like(Integer id) {
         Question question = questionDao.findById(id);
-        if(question==null){
+        if (question == null) {
             throw new BusinessException("问题好像不见了~");
         }
-        int i = questionDao.like(id,question.getLikeNum() +1);
-        if(i<=0){
+        int i = questionDao.like(id, question.getLikeNum() + 1);
+        if (i <= 0) {
             return APIResponse.fail("失败");
         }
         return APIResponse.success("成功");
@@ -106,30 +110,70 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public APIResponse unLike(Integer id) {
         Question question = questionDao.findById(id);
-        if(question==null){
+        if (question == null) {
             throw new BusinessException("问题好像不见了~");
         }
-        int i = questionDao.unLike(id,question.getUnLikeNum()+1);
-        if(i<=0){
+
+
+
+        int i = questionDao.unLike(id, question.getUnLikeNum() + 1);
+
+        //测试事务失效场景
+        hit(id);
+        int a = 1 / 0;
+
+
+        if (i <= 0) {
             return APIResponse.fail("失败");
         }
         return APIResponse.success("成功");
     }
 
+
+    @Override
     @Transactional
-    public void hit(Integer id) {
+    public APIResponse isTop(Integer id) {
         Question question = questionDao.findById(id);
-        if(question==null){
+        if (question == null) {
             throw new BusinessException("问题好像不见了~");
         }
-        int i = questionDao.hit(id,question.getHits()+1);
-        if(i <= 0){
-            questionDao.hit(id,question.getHits()+1);
+        int i = questionDao.top(id);
+        if (i <= 0) {
+            APIResponse.fail("置顶失败");
+        }
+        return APIResponse.success("置顶成功");
+    }
+
+
+    @Override
+    @Transactional
+    public APIResponse cancelTop(Integer id) {
+        Question question = questionDao.findById(id);
+        if (question == null) {
+            throw new BusinessException("问题好像不见了~");
+        }
+        int i = questionDao.cancelTop(id);
+        if (i <= 0) {
+            APIResponse.fail("置顶失败");
+        }
+        return APIResponse.success("置顶成功");
+    }
+
+    //@Transactional
+    private void hit(Integer id) {
+        Question question = questionDao.findById(id);
+        if (question == null) {
+            throw new BusinessException("问题好像不见了~");
+        }
+        int i = questionDao.hit(id, question.getHits() + 1);
+        if (i <= 0) {
+            questionDao.hit(id, question.getHits() + 1);
         }
     }
 
     /**
      * 组装返回值
+     *
      * @param response
      * @param commentsList
      */

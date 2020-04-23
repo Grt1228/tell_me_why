@@ -77,7 +77,7 @@ public class QuestionController {
      * @return
      */
     @PutMapping("/question/like/{id}")
-    public APIResponse like(Integer id){
+    public APIResponse like(@PathVariable("id") Integer id){
         if (StringUtils.isEmpty(id.toString())){
             throw new BusinessException("问题标识不能为空");
         }
@@ -90,11 +90,36 @@ public class QuestionController {
      * @return
      */
     @PutMapping("/question/unLike/{id}")
-    public APIResponse unLike(Integer id){
+    public APIResponse unLike(@PathVariable("id") Integer id){
         if (StringUtils.isEmpty(id.toString())){
             throw new BusinessException("问题标识不能为空");
         }
         return questionService.unLike(id);
     }
 
+    /**
+     * 置顶
+     * @param id
+     * @return
+     */
+    @PutMapping("/question/top/{id}")
+    public APIResponse top(@PathVariable("id") Integer id){
+        if (StringUtils.isEmpty(id.toString())){
+            throw new BusinessException("问题标识不能为空");
+        }
+        return questionService.isTop(id);
+    }
+
+    /**
+     * 取消置顶
+     * @param id
+     * @return
+     */
+    @PutMapping("/question/cancelTop/{id}")
+    public APIResponse cancelTop(@PathVariable("id") Integer id ){
+        if(StringUtils.isEmpty(id.toString())){
+            throw new BusinessException("问题标识不能为空");
+        }
+        return questionService.cancelTop(id);
+    }
 }

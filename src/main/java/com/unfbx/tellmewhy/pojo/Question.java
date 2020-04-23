@@ -1,8 +1,6 @@
 package com.unfbx.tellmewhy.pojo;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
@@ -88,20 +86,7 @@ public class Question {
      */
     private Date modifieTime;
 
-
-    public Question(Integer qid,
-                    @NotBlank(message = "用户id不为空") String openid,
-                    @NotBlank(message = "标题不为空") String title,
-                    @NotBlank(message = "内容不为空") String content,
-                    @NotBlank(message = "简介信息不为空") String slug,
-                    @NotBlank(message = "类别不为空") String type,
-                    Integer commentsNum, Integer hits, Integer likeNum, Integer unLikeNum,
-                    String titlePic,
-                    String status,
-                    String allowComment,
-                    String isTop,
-                    Date createTime,
-                    Date modifieTime) {
+    public Question(Integer qid, @NotBlank(message = "用户id不为空") String openid, @NotBlank(message = "标题不为空") String title, @NotBlank(message = "内容不为空") String content, @NotBlank(message = "简介信息不为空") String slug, @NotBlank(message = "类别不为空") String type, Integer commentsNum, Integer hits, Integer likeNum, Integer unLikeNum, String titlePic, String status, String allowComment, String isTop, Date createTime, Date modifieTime) {
         this.qid = qid;
         this.openid = openid;
         this.title = title;

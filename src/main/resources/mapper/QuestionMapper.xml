@@ -102,7 +102,7 @@
         </if>
 
     </select>
-    <select id="findById" resultType="com.unfbx.tellmewhy.pojo.Question">
+    <select id="findById" resultMap="BaseResultMap">
         SELECT
         <include refid="BASE_COLUMN"/>
         FROM
@@ -114,23 +114,36 @@
     <update id="hit">
         UPDATE
         <include refid="BASE_TABLE"/>
-        SET hits = hits
+        SET hits = #{hits,jdbcType=INTEGER}
         WHERE qid = #{id, jdbcType=INTEGER}
     </update>
     <update id="like">
         UPDATE
         <include refid="BASE_TABLE"/>
-        SET like_num = likeNum
+        SET like_num = #{likeNum,jdbcType=INTEGER}
         WHERE qid = #{id, jdbcType=INTEGER}
     </update>
     <update id="unLike">
         UPDATE
         <include refid="BASE_TABLE"/>
-        SET un_like_num = unLikeNum
+        SET un_like_num = #{unLikeNum,jdbcType=INTEGER}
+        WHERE qid = #{id, jdbcType=INTEGER}
+    </update>
+    <update id="top">
+        UPDATE
+        <include refid="BASE_TABLE"/>
+        SET is_top = '1'
         WHERE qid = #{id, jdbcType=INTEGER}
     </update>
 
-    <select id="findByOpenid" resultMap="BaseResultMap">
+    <update id="cancelTop">
+        PDATE
+        <include refid="BASE_TABLE"/>
+        SET is_top = '0'
+        WHERE qid = #{id, jdbcType=INTEGER}
+    </update>
+
+    <select id="findByOpenid" resultType="com.unfbx.tellmewhy.pojo.Question">
         SELECT
         <include refid="BASE_COLUMN"/>
         FROM

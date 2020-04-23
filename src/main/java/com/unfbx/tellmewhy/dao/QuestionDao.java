@@ -23,4 +23,6 @@ public interface QuestionDao {
 
     List<Question> findByOpenid(String openid);
 
+    int top(Integer id);
+    int cancelTop(Integer id);
 }

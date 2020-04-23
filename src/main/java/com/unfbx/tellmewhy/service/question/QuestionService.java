@@ -51,5 +51,17 @@ public interface QuestionService {
      */
     APIResponse unLike(Integer id);
 
+    /**
+     * 置顶
+     * @param id
+     * @return
+     */
+    APIResponse isTop(Integer id);
 
+    /**
+     * 取消置顶
+     * @param id
+     * @return
+     */
+    APIResponse cancelTop(Integer id);
 }
